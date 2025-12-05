@@ -9,6 +9,7 @@ async function registerController(req,res){
     const existinguser = await userModel.findOne({
         username
     })
+     
 
     if(existinguser){
         return res.status(209).json({
@@ -20,7 +21,7 @@ async function registerController(req,res){
         username,
         password:await bcrypt.hash(password,10)
     })
-
+ 
     const token  = jwt.sign({
         id:user._id
     },process.env.JWT_SECRET)
@@ -45,9 +46,6 @@ async function loginController(req,res){
             message:"User not found"
         })
     }
-
-
-    
     const ispasswordvalid = await bcrypt.compare(password,user.password)
       
     if(!ispasswordvalid){
@@ -66,10 +64,6 @@ async function loginController(req,res){
     })
 
 }
-
-
-
-
 
 module.exports={
     registerController,

@@ -3,36 +3,9 @@ const express = require('express')
 const router = express.Router()
 const jwt = require('jsonwebtoken')
 const userModel = require('../models/user.model')
-
-
-router.post('/', async(req,res)=>{
-
-    const token = req.cookies.token
-
-    if(!token){
-        res.status(401).json({
-           message:"Please login to create a post"
-        })
-    }
-
-    try{
-    const decoded = jwt.verify(token,process.env.JWT_SECRET)
-
-    const user = await userModel.findOne({
-        _id:decoded.id
-    })
-
-    res.status(200).json({
-        message:"login successfull user",
-        user
-    })
-    }
-
-
-    catch(err){
-          res.status(401).json({
-            message:"Invalid token cant login"
-          })
-    }
-})
+const authMiddleware=require('../middleware/auth.middleware')
+const multer = require('multer')
+const upload = multer({storage:multer.memoryStorage()})
+ const createPostController = require('../controllers/post.controller')
+router.post('/', authMiddleware,upload.single("image"),createPostController)
 module.exports = router
